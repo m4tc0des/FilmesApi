@@ -25,15 +25,30 @@ FilmesApi/
     Filme.cs
     Enums/
       GeneroFilme.cs
+  Migrations/
   Program.cs
   appsettings.json
 
 ```
 # Endpoints principais
 ```
-POST /filme -> adiciona um novo filme
+Criar filme
+POST /filme
+Envia um JSON com os dados do filme:
+{
+  "titulo": "Interestelar",
+  "tituloOriginal": "Interstellar",
+  "genero": 1,
+  "diretor": "Christopher Nolan",
+  "duracao": "02:49:00"
+}
 
-GET /filme -> lista filmes com paginação (skip, take)
+Listar filmes (com paginação)
+GET /filme?skip=0&take=10
+Retorna uma lista paginada de filmes
 
-GET /filme/{id} -> busca filme por Id
+Buscar filme por ID
+GET /filme/{id}
+Retorna o filme correspondente ou 404 caso não exista
+
 ```
