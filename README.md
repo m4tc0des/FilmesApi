@@ -1,15 +1,11 @@
-# 🎬 Filmes API
+# Filmes API
 
-API desenvolvida em **ASP.NET Core** com operações **RESTful** para gerenciamento de filmes.  
-Permite cadastrar e visualizar filmes com informações como título, gênero, diretor e duração.  
-Documentação e testes podem ser feitos via **Swagger** ou **Postman**.  
+API desenvolvida em ASP.NET Core com operações RESTful para gerenciamento de filmes. Permite cadastrar e visualizar filmes com informações como título, gênero, diretor e duração. Documentação e testes podem ser feitos via Swagger ou Postman.
 
-⚠️ Este projeto ainda está em desenvolvimento e novas funcionalidades serão implementadas em breve, como integração com banco de dados, atualização e exclusão de registros, além de melhorias na documentação.
+Este projeto ainda está em desenvolvimento e novas funcionalidades serão implementadas em breve, como atualização e exclusão de registros, além de melhorias na documentação.
 
-
----
-
-## 🚀 Tecnologias utilizadas
+# Tecnologias utilizadas
+```
 - C#
 - ASP.NET Core
 - Swagger (documentação)
@@ -17,146 +13,27 @@ Documentação e testes podem ser feitos via **Swagger** ou **Postman**.
 - Data Annotations para validação
 - Entity Framework Core (ORM)
 - MySQL (banco de dados relacional)
-  
----
-
-## 📌 Estrutura principal
-
-### Program.cs
-```csharp
-using FilmesApi.Data;
-using Microsoft.EntityFrameworkCore;
-
-var builder = WebApplication.CreateBuilder(args);
-
-var connectionString = builder.Configuration.GetConnectionString("FilmeConnection");
-
-builder.Services.AddDbContext<FilmeContext>(opts =>
-    opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+```
+## Estrutura principal
+```
+FilmesApi/
+  Controllers/
+    FilmeController.cs
+  Data/
+    FilmeContext.cs
+  Models/
+    Filme.cs
+    Enums/
+      GeneroFilme.cs
+  Program.cs
+  appsettings.json
 
 ```
-### Controller/FilmeController.cs
-```csharp
-using FilmesApi.Models;
-using Microsoft.AspNetCore.Mvc;
-
-namespace FilmesApi.Controllers;
-
-[ApiController]
-[Route("[controller]")]
-public class FilmeController : ControllerBase
-{
-    private static List<Filme> filmes = new List<Filme>();
-    private static int id = 0;
-    
-    [HttpPost]
-    public IActionResult AdicionarFilme([FromBody]Filme filme) 
-    {
-        filme.Id = id ++;
-        filmes.Add(filme);
-        return CreatedAtAction(nameof(RecuperarFilmePorId), new { id = filme.Id }, filme);
-    }
-
-    [HttpGet]
-    public IEnumerable<Filme> VisualizarFilme([FromQuery] int skip = 0, int take = 10)
-    {
-        return filmes.Skip(skip).Take(take);
-    }
-
-    [HttpGet("{id}")]
-    public IActionResult RecuperarFilmePorId(int id)
-    {
-        var filme = filmes.FirstOrDefault(x => x.Id == id);
-        if (filme == null)
-        {
-            return NotFound();
-        }
-        else 
-            return Ok(filme);
-    }
-}
-
+# Endpoints principais
 ```
-### Models/Filme.cs
-```csharp
-using FilmesApi.Models.Enums;
-using System.ComponentModel.DataAnnotations;
+POST /filme -> adiciona um novo filme
 
-namespace FilmesApi.Models;
+GET /filme -> lista filmes com paginação (skip, take)
 
-public class Filme
-{
-    public int Id { get; set; }
-
-    [Required(ErrorMessage = "O titulo é obrigatório")]
-    [MaxLength(50, ErrorMessage = "O titulo nao deve exceder 50 caracteres")]
-    public string Titulo { get; set; }
-
-    [Required]
-    [MaxLength(50, ErrorMessage = "O titulo nao deve exceder 50 caracteres")]
-    public string TituloOriginal { get; set; }
-
-    [Required(ErrorMessage = "O gênero é obrigatório")]
-    public GeneroFilme Genero { get; set; }
-
-    [Required(ErrorMessage = "O titulo é obrigatório")]
-    [MaxLength(30, ErrorMessage = "O diretor nao deve exceder 30 caracteres")]
-    public string Diretor { get; set; }
-
-    [Required(ErrorMessage = "A duração é obrigatória")]
-    [MaxLength(8, ErrorMessage = "A duração deve estar no formato hh:mm:ss")]
-    public string Duracao { get; set; }
-    
-}
+GET /filme/{id} -> busca filme por Id
 ```
-### Models/Enums/GeneroFilme.cs
-```csharp
-namespace FilmesApi.Models.Enums
-{
-    public enum GeneroFilme : int
-    {
-
-        Acao = 1,
-        Aventura = 2,
-        Comedia = 3,
-        Documentario = 4,
-        Drama = 5,
-        Espionagem = 6,
-        Faroeste = 7,
-        Fantasia = 8,
-        FiccaoCientifica = 9,
-        Musical = 10,
-        Romance = 11,
-        Suspense = 12,
-        Terror = 13,
-        Animacao = 14,
-        Crime = 15,
-    }
-}
-
-
-
-
