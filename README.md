@@ -15,12 +15,50 @@ Documentação e testes podem ser feitos via **Swagger** ou **Postman**.
 - Swagger (documentação)
 - Postman (testes)
 - Data Annotations para validação
-
+- Entity Framework Core (ORM)
+- MySQL (banco de dados relacional)
+  
 ---
 
 ## 📌 Estrutura principal
 
-### Controller
+### Program.cs
+```csharp
+using FilmesApi.Data;
+using Microsoft.EntityFrameworkCore;
+
+var builder = WebApplication.CreateBuilder(args);
+
+var connectionString = builder.Configuration.GetConnectionString("FilmeConnection");
+
+builder.Services.AddDbContext<FilmeContext>(opts =>
+    opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+// Add services to the container.
+
+builder.Services.AddControllers();
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.UseHttpsRedirection();
+
+app.UseAuthorization();
+
+app.MapControllers();
+
+app.Run();
+
+```
+### Controller/FilmeController.cs
 ```csharp
 using FilmesApi.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -62,8 +100,9 @@ public class FilmeController : ControllerBase
 }
 
 ```
-### Model
+### Models/Filme.cs
 ```csharp
+using FilmesApi.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace FilmesApi.Models;
@@ -76,9 +115,12 @@ public class Filme
     [MaxLength(50, ErrorMessage = "O titulo nao deve exceder 50 caracteres")]
     public string Titulo { get; set; }
 
+    [Required]
+    [MaxLength(50, ErrorMessage = "O titulo nao deve exceder 50 caracteres")]
+    public string TituloOriginal { get; set; }
+
     [Required(ErrorMessage = "O gênero é obrigatório")]
-    [MaxLength(30, ErrorMessage = "O gênero nao deve exceder 30 caracteres")]
-    public string Genero { get; set; }
+    public GeneroFilme Genero { get; set; }
 
     [Required(ErrorMessage = "O titulo é obrigatório")]
     [MaxLength(30, ErrorMessage = "O diretor nao deve exceder 30 caracteres")]
@@ -89,6 +131,32 @@ public class Filme
     public string Duracao { get; set; }
     
 }
+```
+### Models/Enums/GeneroFilme.cs
+```csharp
+namespace FilmesApi.Models.Enums
+{
+    public enum GeneroFilme : int
+    {
+
+        Acao = 1,
+        Aventura = 2,
+        Comedia = 3,
+        Documentario = 4,
+        Drama = 5,
+        Espionagem = 6,
+        Faroeste = 7,
+        Fantasia = 8,
+        FiccaoCientifica = 9,
+        Musical = 10,
+        Romance = 11,
+        Suspense = 12,
+        Terror = 13,
+        Animacao = 14,
+        Crime = 15,
+    }
+}
+
 
 
 
