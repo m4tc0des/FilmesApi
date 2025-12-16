@@ -1,13 +1,10 @@
 ﻿using FilmesApi.Models.Enums;
 using System.ComponentModel.DataAnnotations;
 
-namespace FilmesApi.Models;
+namespace FilmesApi.Data.Dtos;
 
-public class Filme
+public class UpdateFilmeDto
 {
-    [Key]
-    [Required]
-    public int Id { get; set; }
 
     [Required(ErrorMessage = "O titulo é obrigatório")]
     [StringLength(50, ErrorMessage = "O titulo nao deve exceder 50 caracteres")]
@@ -27,5 +24,4 @@ public class Filme
     [Required(ErrorMessage = "A duração é obrigatória")]
     [StringLength(8, ErrorMessage = "A duração deve estar no formato hh:mm:ss")]
     public string Duracao { get; set; }
-
 }
