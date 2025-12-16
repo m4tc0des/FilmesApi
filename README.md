@@ -8,11 +8,14 @@ Este projeto ainda está em desenvolvimento e novas funcionalidades serão imple
 ```
 - C#
 - ASP.NET Core
-- Swagger (documentação)
-- Postman (testes)
-- Data Annotations para validação
 - Entity Framework Core (ORM)
-- MySQL (banco de dados relacional)
+- MySQL
+- AutoMapper
+- NewtonsoftJson (suporte a JSON Patch)
+- Swagger / Swashbuckle
+- Postman
+- Data Annotations (validação)
+
 ```
 ## Estrutura principal
 ```
@@ -21,10 +24,15 @@ FilmesApi/
     FilmeController.cs
   Data/
     FilmeContext.cs
+  Data/Dtos/
+    CreateFilmeDto.cs
+    UpdateFilmeDto.cs
   Models/
     Filme.cs
     Enums/
       GeneroFilme.cs
+  Profiles/
+    FilmeProfile.cs
   Migrations/
   Program.cs
   appsettings.json
@@ -33,8 +41,9 @@ FilmesApi/
 # Endpoints principais
 ```
 Criar filme
+
 POST /filme
-Envia um JSON com os dados do filme:
+Exemplo de JSON:
 {
   "titulo": "Interestelar",
   "tituloOriginal": "Interstellar",
@@ -44,11 +53,18 @@ Envia um JSON com os dados do filme:
 }
 
 Listar filmes (com paginação)
+
 GET /filme?skip=0&take=10
 Retorna uma lista paginada de filmes
 
-Buscar filme por ID
-GET /filme/{id}
-Retorna o filme correspondente ou 404 caso não exista
+Atualizar Filme (PUT)
 
-```
+PUT /filme/{id}
+Atualiza todos os campos do filme
+
+Atualização parcial (PATCH)
+PATCH /filme/{id}
+Exemplo:
+[
+  { "op": "replace", "path": "/titulo", "value": "Novo Título" }
+]
